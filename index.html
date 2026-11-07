@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOMORA REALITY | Najděte svůj nový domov</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="logo">DOMORA<span>.</span></div>
+  <nav>
+    <a href="#domov">Domů</a>
+    <a href="#nabidka">Nemovitosti</a>
+    <a href="#onas">O nás</a>
+    <a href="#kontakt">Kontakt</a>
+    <button class="nav-btn" onclick="openAdmin()">Administrace</button>
+  </nav>
+</header>
+
+<div class="hero" id="domov">
+  <div class="hero-content">
+    <div class="eyebrow">DOMORA REALITY</div>
+    <h1>Místo, kde začíná váš nový příběh.</h1>
+    <p>
+      Pomáháme lidem najít domov, který odpovídá jejich představám.
+      Objevte nabídku nemovitostí a najděte místo, kam budete rádi patřit.
+    </p>
+    <a href="#nabidka" class="primary-btn">Prohlédnout nabídku →</a>
+  </div>
+</div>
+
+<section id="nabidka">
+  <div class="section-heading">
+    <div class="eyebrow">NAŠE NABÍDKA</div>
+    <h2>Nemovitosti, které stojí za pozornost</h2>
+    <p>Vyberte si z aktuální nabídky nemovitostí.</p>
+  </div>
+
+  <div class="filters">
+    <input id="search" placeholder="Hledat lokalitu..." oninput="renderProperties()">
+
+    <select id="type" onchange="renderProperties()">
+      <option value="">Všechny nemovitosti</option>
+      <option value="Dům">Domy</option>
+      <option value="Byt">Byty</option>
+      <option value="Pozemek">Pozemky</option>
+    </select>
+
+    <select id="sort" onchange="renderProperties()">
+      <option value="default">Výchozí řazení</option>
+      <option value="low">Nejlevnější</option>
+      <option value="high">Nejdražší</option>
+    </select>
+
+    <button class="primary-btn" onclick="resetFilters()">Zrušit filtry</button>
+  </div>
+
+  <div class="property-grid" id="propertyGrid"></div>
+</section>
+
+<section class="about" id="onas">
+  <div>
+    <div class="eyebrow">KDO JSME</div>
+    <h2>Reality s lidským přístupem.</h2>
+    <p>
+      V DOMORA REALITY věříme, že koupě nebo prodej nemovitosti
+      je jedním z nejdůležitějších životních rozhodnutí.
+      Proto klademe důraz na osobní přístup, transparentnost
+      a profesionální služby.
+      <br><br>
+      Naším cílem není pouze prodat nemovitost.
+      Chceme vám pomoci najít správné místo pro váš další život.
+    </p>
+  </div>
+
+  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1000" alt="Moderní interiér domu">
+</section>
+
+<section>
+  <div class="section-heading">
+    <div class="eyebrow">PROČ DOMORA</div>
+    <h2>Váš partner na cestě k bydlení</h2>
+  </div>
+
+  <div class="benefits">
+    <div class="benefit">
+      <div class="number">01</div>
+      <h3>Osobní přístup</h3>
+      <p>Každý klient je pro nás důležitý. Hledáme řešení podle vašich potřeb.</p>
+    </div>
+
+    <div class="benefit">
+      <div class="number">02</div>
+      <h3>Profesionální servis</h3>
+      <p>Pomůžeme vám s celým procesem od první prohlídky až po dokončení obchodu.</p>
+    </div>
+
+    <div class="benefit">
+      <div class="number">03</div>
+      <h3>Transparentnost</h3>
+      <p>Jednáme férově a srozumitelně. Vždy víte, na čem jste.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="kontakt">
+  <div class="eyebrow">JSME TU PRO VÁS</div>
+  <h2>Hledáte svůj nový domov?</h2>
+  <p>Ozvěte se nám a společně najdeme to správné místo.</p>
+  <a href="mailto:info@domora.cz" class="primary-btn">Napsat nám</a>
+</section>
+
+<footer>
+  <div class="logo">DOMORA<span>.</span></div>
+  <div>© 2026 DOMORA REALITY | Všechna práva vyhrazena</div>
+  <div>info@domora.cz</div>
+</footer>
+
+<!-- DETAIL NEMOVITOSTI -->
+
+<div class="modal" id="detailModal" onclick="closeDetailOutside(event)">
+  <div class="modal-content">
+    <button class="close" onclick="closeDetail()">×</button>
+    <img id="detailImage" src="" alt="Fotografie nemovitosti">
+
+    <div class="detail-body">
+      <div class="eyebrow" id="detailType"></div>
+      <h2 id="detailTitle"></h2>
+      <div class="price" id="detailPrice"></div>
+      <div class="detail-features" id="detailFeatures"></div>
+      <p id="detailDescription"></p>
+      <button class="detail-contact" onclick="contactProperty()">Mám zájem o nemovitost</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMINISTRACE -->
+
+<div class="admin" id="adminPanel">
+  <div class="admin-box">
+    <button class="close" onclick="closeAdmin()">×</button>
+
+    <div class="eyebrow">SPRÁVA WEBU</div>
+    <h2>Administrace nemovitostí</h2>
+
+    <div id="loginArea">
+      <p>Zadejte administrátorské heslo.</p>
+      <input type="password" id="adminPassword" placeholder="Heslo">
+      <button class="primary-btn" onclick="loginAdmin()">Přihlásit se</button>
+      <p id="loginError" style="color:red;margin-top:10px"></p>
+    </div>
+
+    <div id="adminArea" style="display:none">
+      <h3 id="formTitle">Přidat nemovitost</h3>
+
+      <input type="hidden" id="editId">
+
+      <label>Název nemovitosti</label>
+      <input id="pTitle" placeholder="Např. Moderní rodinný dům">
+
+      <label>Typ nemovitosti</label>
+      <select id="pType">
+        <option value="Dům">Dům</option>
+        <option value="Byt">Byt</option>
+        <option value="Pozemek">Pozemek</option>
+      </select>
+
+      <label>Lokalita</label>
+      <input id="pLocation" placeholder="Např. Praha 6">
+
+      <label>Cena (Kč)</label>
+      <input id="pPrice" type="number" placeholder="8500000">
+
+      <label>Užitná plocha (m²)</label>
+      <input id="pArea" type="number" placeholder="120">
+
+      <label>Počet pokojů</label>
+      <input id="pRooms" placeholder="4+kk">
+
+      <label>Odkaz na fotografii</label>
+      <input id="pImage" placeholder="https://...">
+
+      <label>Popis nemovitosti</label>
+      <textarea id="pDescription" placeholder="Popište nemovitost..."></textarea>
+
+      <div class="admin-actions">
+        <button class="primary-btn" onclick="saveProperty()">Uložit nemovitost</button>
+        <button class="secondary-btn" onclick="clearForm()">Vyčistit formulář</button>
+        <button class="secondary-btn" onclick="logoutAdmin()">Odhlásit se</button>
+      </div>
+
+      <div class="admin-list">
+        <h3>Správa nabídek</h3>
+        <div id="adminList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// UKÁZKOVÉ NEMOVITOSTI
+
+const starterProperties = [
+ {
+  id:1,
+  title:"Luxusní rodinná vila",
+  type:"Dům",
+  location:"Praha 6",
+  price:18900000,
+  area:245,
+  rooms:"6+kk",
+  image:"https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000",
+  description:"Moderní rodinná vila s prostornou zahradou, velkou terasou a garáží. Nemovitost se nachází v klidné lokalitě s výbornou dostupností do centra."
+ },
+ {
+  id:2,
+  title:"Moderní byt s výhledem",
+  type:"Byt",
+  location:"Praha 3",
+  price:6490000,
+  area:82,
+  rooms:"3+kk",
+  image:"https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1000",
+  description:"Stylový byt po rekonstrukci s moderní kuchyní a krásným výhledem. Výborná občanská vybavenost v okolí."
+ },
+ {
+  id:3,
+  title:"Stavební pozemek",
+  type:"Pozemek",
+  location:"Kladno",
+  price:3200000,
+  area:850,
+  rooms:"-",
+  image:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1000",
+  description:"Pozemek vhodný pro výstavbu rodinného domu. Klidné prostředí a dobrá dostupnost do okolních měst."
+ }
+];
+
+let properties;
+
+try {
+  const saved = localStorage.getItem("domoraProperties");
+  properties = saved ? JSON.parse(saved) : starterProperties;
+  if (!Array.isArray(properties)) properties = starterProperties;
+} catch {
+  properties = starterProperties;
+}
+
+function saveData() {
+  localStorage.setItem("domoraProperties",JSON.stringify(properties));
+}
+
+function formatPrice(price) {
+  return Number(price).toLocaleString("cs-CZ")+" Kč";
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function renderProperties() {
+  const grid = document.getElementById("propertyGrid");
+  const search = document.getElementById("search").value.toLowerCase();
+  const type = document.getElementById("type").value;
+  const sort = document.getElementById("sort").value;
+
+  let filtered = properties.filter(p =>
+    p.location.toLowerCase().includes(search) &&
+    (!type || p.type === type)
+  );
+
+  if(sort === "low") filtered.sort((a,b)=>a.price-b.price);
+  if(sort === "high") filtered.sort((a,b)=>b.price-a.price);
+
+  if(filtered.length === 0) {
+    grid.innerHTML = '<div class="empty">Žádné nemovitosti neodpovídají vašemu vyhledávání.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => `
+    <article class="property-card" onclick="showDetail(${p.id})">
+      <div class="property-image">
+        <img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}"
+          onerror="this.src='https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000'">
+        <span class="tag">${escapeHTML(p.type)}</span>
+      </div>
+      <div class="property-info">
+        <h3>${escapeHTML(p.title)}</h3>
+        <div class="location">📍 ${escapeHTML(p.location)}</div>
+        <div class="price">${formatPrice(p.price)}</div>
+        <div class="features">
+          <span>⌂ ${escapeHTML(String(p.area))} m²</span>
+          <span>▦ ${escapeHTML(p.rooms)}</span>
+          <span>${escapeHTML(p.type)}</span>
+        </div>
+      </div>
+    </article>
+  `).join("");
+}
+
+function showDetail(id) {
+  const p = properties.find(item=>item.id===id);
+  if(!p) return;
+
+  selectedProperty = p;
+
+  document.getElementById("detailImage").src=p.image;
+  document.getElementById("detailType").textContent=p.type+" | "+p.location;
+  document.getElementById("detailTitle").textContent=p.title;
+  document.getElementById("detailPrice").textContent=formatPrice(p.price);
+  document.getElementById("detailFeatures").textContent=
+    "Plocha: "+p.area+" m²   |   Pokoje: "+p.rooms;
+  document.getElementById("detailDescription").textContent=p.description;
+
+  document.getElementById("detailModal").style.display="block";
+}
+
+let selectedProperty = null;
+
+function closeDetail() {
+  document.getElementById("detailModal").style.display="none";
+}
+
+function closeDetailOutside(e) {
+  if(e.target.id==="detailModal") closeDetail();
+}
+
+function contactProperty() {
+  if(!selectedProperty) return;
+  const subject=encodeURIComponent("Zájem o nemovitost: "+selectedProperty.title);
+  const body=encodeURIComponent(
+    "Dobrý den,\n\nmám zájem o nemovitost "+selectedProperty.title+
+    " v lokalitě "+selectedProperty.location+".\n\nProsím o více informací."
+  );
+  window.location.href="mailto:info@domora.cz?subject="+subject+"&body="+body;
+}
+
+function resetFilters() {
+  document.getElementById("search").value="";
+  document.getElementById("type").value="";
+  document.getElementById("sort").value="default";
+  renderProperties();
+}
+
+function openAdmin() {
+  document.getElementById("adminPanel").style.display="block";
+}
+
+function closeAdmin() {
+  document.getElementById("adminPanel").style.display="none";
+}
+
+function loginAdmin() {
+  if(document.getElementById("adminPassword").value==="domora2026") {
+    document.getElementById("loginArea").style.display="none";
+    document.getElementById("adminArea").style.display="block";
+    renderAdmin();
+  } else {
+    document.getElementById("loginError").textContent="Nesprávné heslo.";
+  }
+}
+
+function logoutAdmin() {
+  document.getElementById("loginArea").style.display="block";
+  document.getElementById("adminArea").style.display="none";
+  document.getElementById("adminPassword").value="";
+  clearForm();
+}
+
+function saveProperty() {
+  const title=document.getElementById("pTitle").value.trim();
+  const location=document.getElementById("pLocation").value.trim();
+  const price=Number(document.getElementById("pPrice").value);
+  const area=Number(document.getElementById("pArea").value);
+  const image=document.getElementById("pImage").value.trim();
+  const description=document.getElementById("pDescription").value.trim();
+  const rooms=document.getElementById("pRooms").value.trim();
+  const type=document.getElementById("pType").value;
+  const editId=document.getElementById("editId").value;
+
+  if(!title || !location || !price || !area || !image || !description || !rooms) {
+    alert("Vyplňte prosím všechna pole.");
+    return;
+  }
+
+  if(!Number.isFinite(price) || price<=0 || !Number.isFinite(area) || area<=0) {
+    alert("Cena a plocha musí být kladná čísla.");
+    return;
+  }
+
+  try {
+    const url = new URL(image);
+    if(url.protocol !== "https:" && url.protocol !== "http:") throw new Error();
+  } catch {
+    alert("Zadejte platný odkaz na fotografii (https://...).");
+    return;
+  }
+
+  const property={
+    id:editId ? Number(editId) : Date.now(),
+    title,type,location,price,area,rooms,image,description
+  };
+
+  if(editId) {
+    properties=properties.map(p=>p.id===Number(editId)?property:p);
+  } else {
+    properties.push(property);
+  }
+
+  saveData();
+  renderProperties();
+  renderAdmin();
+  clearForm();
+
+  alert("Nemovitost byla uložena.");
+}
+
+function renderAdmin() {
+  const list=document.getElementById("adminList");
+
+  list.innerHTML=properties.map(p=>`
+    <div class="admin-item">
+      <div>
+        <strong>${escapeHTML(p.title)}</strong><br>
+        <small>${formatPrice(p.price)}</small>
+      </div>
+      <div class="admin-actions">
+        <button class="secondary-btn" onclick="editProperty(${p.id})">Upravit</button>
+        <button class="delete-btn" onclick="deleteProperty(${p.id})">Smazat</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function editProperty(id) {
+  const p=properties.find(item=>item.id===id);
+  if(!p) return;
+
+  document.getElementById("editId").value=p.id;
+  document.getElementById("pTitle").value=p.title;
+  document.getElementById("pType").value=p.type;
+  document.getElementById("pLocation").value=p.location;
+  document.getElementById("pPrice").value=p.price;
+  document.getElementById("pArea").value=p.area;
+  document.getElementById("pRooms").value=p.rooms;
+  document.getElementById("pImage").value=p.image;
+  document.getElementById("pDescription").value=p.description;
+  document.getElementById("formTitle").textContent="Upravit nemovitost";
+
+  document.getElementById("pTitle").scrollIntoView({behavior:"smooth"});
+}
+
+function deleteProperty(id) {
+  if(!confirm("Opravdu chcete smazat tuto nemovitost?")) return;
+
+  properties=properties.filter(p=>p.id!==id);
+  saveData();
+  renderProperties();
+  renderAdmin();
+}
+
+function clearForm() {
+  ["editId","pTitle","pLocation","pPrice","pArea","pRooms","pImage","pDescription"]
+  .forEach(id=>document.getElementById(id).value="");
+
+  document.getElementById("formTitle").textContent="Přidat nemovitost";
+  document.getElementById("pType").value="Dům";
+}
+
+renderProperties();
+
+</script>
+</body>
+</html>
